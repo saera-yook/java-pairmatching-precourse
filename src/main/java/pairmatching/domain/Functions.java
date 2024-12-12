@@ -1,6 +1,7 @@
 package pairmatching.domain;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 public enum Functions {
     MATCHING("1", "페어 매칭"),
@@ -19,5 +20,9 @@ public enum Functions {
     public static void askFunctionChoice() {
         System.out.println("기능을 선택하세요.");
         Arrays.stream(values()).map(f -> f.code + ". "+ f.description).forEach(System.out::println);
+    }
+
+    public static Functions findBy(final String inputCode) {
+        return Arrays.stream(values()).filter(f -> Objects.equals(f.code, inputCode)).findFirst().orElseThrow();
     }
 }
