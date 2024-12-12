@@ -18,6 +18,11 @@ public class ApplicationRunner {
     private final ConsoleOutputView consoleOutputView = new ConsoleOutputView();
 
     public void run() {
+        ResourceFileReader resourceFileReader = new ResourceFileReader();
+        List<String> backendCrewNames = resourceFileReader.readLines(BACKEND_FILE_PATH_NAME);
+        List<String> frontendCrewNames = resourceFileReader.readLines(FRONTEND_FILE_PATH_NAME);
+
+
         Functions.askFunctionChoice();
         String inputChoice = consoleInputView.readLine();
 
