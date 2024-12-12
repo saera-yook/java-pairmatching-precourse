@@ -1,9 +1,16 @@
 package pairmatching;
 
+import static pairmatching.domain.Course.BACKEND;
+import static pairmatching.domain.Course.FRONTEND;
 import static pairmatching.domain.Functions.MATCHING;
 
+import camp.nextstep.edu.missionutils.Randoms;
 import java.util.List;
+import java.util.stream.Collectors;
+import pairmatching.domain.BackendCrews;
 import pairmatching.domain.Course;
+import pairmatching.domain.Crew;
+import pairmatching.domain.FrontendCrews;
 import pairmatching.domain.Functions;
 import pairmatching.domain.Level;
 import pairmatching.view.ConsoleInputView;
@@ -21,15 +28,18 @@ public class ApplicationRunner {
         ResourceFileReader resourceFileReader = new ResourceFileReader();
         List<String> backendCrewNames = resourceFileReader.readLines(BACKEND_FILE_PATH_NAME);
         List<String> frontendCrewNames = resourceFileReader.readLines(FRONTEND_FILE_PATH_NAME);
-
-
+        BackendCrews backendCrews = backendCrewNames.stream().map(n -> new Crew(BACKEND, n))
+                .collect(Collectors.collectingAndThen(Collectors.toList(), BackendCrews::new));
+        FrontendCrews frontendCrews = frontendCrewNames.stream().map(n -> new Crew(FRONTEND, n))
+                .collect(Collectors.collectingAndThen(Collectors.toList(), FrontendCrews::new));
         Functions.askFunctionChoice();
         String inputChoice = consoleInputView.readLine();
-
         if (MATCHING.equals(Functions.findBy(inputChoice))) {
             printCoursesAndMissions();
             matchPair();
         }
+
+        List<String> shuffledNames = Randoms.shuffle(frontendCrewNames);
     }
 
     private void matchPair() {
