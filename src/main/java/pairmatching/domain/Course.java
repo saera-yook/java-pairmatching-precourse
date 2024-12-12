@@ -13,4 +13,8 @@ public enum Course {
     public static void printCourses() {
         System.out.println("과정: " + BACKEND.name + " | " + FRONTEND.name);
     }
+
+    public static boolean isBackend(String name) {
+        return BACKEND.name.equals(name);
+    }
 }

@@ -2,17 +2,22 @@ package pairmatching;
 
 import static pairmatching.domain.Course.BACKEND;
 import static pairmatching.domain.Course.FRONTEND;
+import static pairmatching.domain.Course.isBackend;
 import static pairmatching.domain.Functions.MATCHING;
 
 import camp.nextstep.edu.missionutils.Randoms;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import pairmatching.domain.BackendCrews;
 import pairmatching.domain.Course;
 import pairmatching.domain.Crew;
+import pairmatching.domain.Crews;
 import pairmatching.domain.FrontendCrews;
 import pairmatching.domain.Functions;
 import pairmatching.domain.Level;
+import pairmatching.domain.ResultOfLevel;
+import pairmatching.domain.ResultOfMission;
 import pairmatching.view.ConsoleInputView;
 import pairmatching.view.ConsoleOutputView;
 import pairmatching.view.ResourceFileReader;
@@ -36,17 +41,38 @@ public class ApplicationRunner {
         String inputChoice = consoleInputView.readLine();
         if (MATCHING.equals(Functions.findBy(inputChoice))) {
             printCoursesAndMissions();
-            matchPair();
+            requestMatchingOptions();
         }
+        String input = consoleInputView.readLine();
+        List<String> matchingOptions = Arrays.stream(input.split(", ")).toList();
 
-        List<String> shuffledNames = Randoms.shuffle(frontendCrewNames);
+        Crews sortedCrews;
+        if (isBackend(matchingOptions.getFirst())) {
+            sortedCrews = getSortedCrews(backendCrewNames, backendCrews);
+
+        } else {
+            sortedCrews = getSortedCrews(frontendCrewNames, frontendCrews);
+        }
+        ResultOfLevel resultOfLevel = new ResultOfLevel(BACKEND,
+                Level.findLevelByName(matchingOptions.get(1)),
+                sortedCrews.createMatchingHistory());
+        ResultOfMission resultOfMission = createMatchingResult(matchingOptions, sortedCrews);
     }
 
-    private void matchPair() {
+    private ResultOfMission createMatchingResult(List<String> matchingOptions, Crews sortedCrews) {
+        return new ResultOfMission(
+                Level.findMissionBy(matchingOptions.get(2), matchingOptions.get(1)),
+                sortedCrews);
+    }
+
+    private Crews getSortedCrews(List<String> crewNames, Crews crews) {
+        List<String> shuffledNames = Randoms.shuffle(crewNames);
+        return crews.createSortedCrews(crewNames);
+    }
+
+    private void requestMatchingOptions() {
         consoleOutputView.println("과정, 레벨, 미션을 선택하세요.");
         consoleOutputView.println("ex) 백엔드, 레벨1, 자동차경주");
-        String input = consoleInputView.readLine();
-
     }
 
     private void printCoursesAndMissions() {

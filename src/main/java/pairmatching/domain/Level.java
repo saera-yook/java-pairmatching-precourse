@@ -21,11 +21,20 @@ public enum Level {
     LEVEL5("레벨5", Arrays.asList());
 
     private final String name;
+
     private final List<Mission> missions;
 
     Level(String name, final List<Mission> missions) {
         this.name = name;
         this.missions = missions;
+    }
+
+    public static Level findLevelByName(String name) {
+        return Arrays.stream(values()).filter(level -> level.name.equals(name)).findFirst().orElseThrow();
+    }
+
+    public static Mission findMissionBy(String missionName, String levelName) {
+        return findLevelByName(levelName).missions.stream().filter(m -> m.getName().equals(missionName)).findFirst().orElseThrow();
     }
 
     public static void printMissions() {
@@ -35,5 +44,9 @@ public enum Level {
 
     private String makeMissionMessage() {
         return this.missions.stream().map(Mission::getName).collect(Collectors.joining(" | "));
+    }
+
+    public List<Mission> getMissions() {
+        return missions;
     }
 }
